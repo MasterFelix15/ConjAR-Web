@@ -1,0 +1,176 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    title ConjAR Web
+    meta(name='description', content='A-Builder by Zhang Tianrui')
+    script(src='https://aframe.io/releases/0.7.0/aframe.min.js')
+    script(src='https://npmcdn.com/aframe-animation-component@3.0.1')
+    script(src='https://npmcdn.com/aframe-event-set-component@4.0.1')
+    script(src='https://npmcdn.com/aframe-layout-component@3.0.1')
+    script(src='https://npmcdn.com/aframe-template-component@3.1.1')
+    script(src='https://unpkg.com/aframe-look-at-component@0.6.0/dist/aframe-look-at-component.min.js')
+    script(src='https://unpkg.com/aframe-text-geometry-component@0.5.1/dist/aframe-text-geometry-component.min.js')
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js')
+    script(src='javascripts/selectable.js')
+    script(src='javascripts/stackable.js')
+    script(src='javascripts/pressable.js')
+    script(src='javascripts/api-handler.js')
+  body
+    a-scene(stats='')
+      a-assets
+        audio#click-sound(crossorigin='anonymous', src='audio/click.mp3')
+        audio#launch-sound(crossorigin='anonymous', src='audio/launch.mp3')
+        img#icon-geometry(src='images/cube.png')
+        img#icon-teleport(src='images/location.png')
+        img#icon-api(src='images/api.png')
+        img#icon-property(src='images/axis.png')
+        img#icon-delete(src='images/trash.png')
+        img#icon-rotate(src='images/circular-arrows.png')
+        img#icon-rotate-xy-c(src='images/rotate-xy-c.png')
+        img#icon-rotate-xy-cc(src='images/rotate-xy-cc.png')
+        img#icon-rotate-yz-c(src='images/rotate-yz-c.png')
+        img#icon-rotate-yz-cc(src='images/rotate-yz-cc.png')
+        img#icon-rotate-xz-c(src='images/rotate-xz-c.png')
+        img#icon-rotate-xz-cc(src='images/rotate-xz-cc.png')
+        img#icon-resize(src='images/zoom-in.png')
+        img#icon-resize1(src='images/zoom-out.png')
+        img#icon-reposition(src='images/movement-arrows.png')
+        img#icon-reposition1(src='images/direction.png')
+        img#icon-reposition2(src='images/forward.png')
+        img#icon-reposition3(src='images/backward.png')
+        img#icon-back(src='images/out.png')
+        script#geometry(type='text/html').
+          <a-entity class="geometry"
+          geometry="primitive: circle; radius: 0.2"
+          material="side: double; transparent: true; opacity: 0"
+          event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+          event-set__4="_event: mouseleave; scale: 1 1 1"
+          sound="on: click; src: #click-sound"
+          selectable="on: click; src: ${primitive}">
+          <a-entity geometry="primitive: ring; radiusInner: 0.16; radiusOuter: 0.2"
+          material="side: double; color: #cccccc"></a-entity>
+          <a-entity geometry="primitive: ${primitive}"
+          scale="${scale} ${scale} ${scale}"
+          material="shader: standard; color: #999999"></a-entity>
+          </a-entity>
+        script#txt-button(type='text/html').
+          <a-entity class="geometry"
+          geometry="primitive: circle; radius: 0.2"
+          material="side: double; transparent: true; opacity: 0"
+          event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+          event-set__4="_event: mouseleave; scale: 1 1 1"
+          sound="on: click; src: #click-sound"
+          pressable="on: click; src: ${behavior}">
+          <a-entity geometry="primitive: ring; radiusInner: 0.16; radiusOuter: 0.2"
+          material="side: double; color: #cccccc"></a-entity>
+          <a-entity text="width: 5.5; anchor: center; align: center; color: #666666; value: ${text}"></a-entity>
+          </a-entity>
+        script#img-button(type='text/html').
+          <a-entity class="geometry"
+          geometry="primitive: circle; radius: 0.2"
+          material="side: double; transparent: true; opacity: 0"
+          event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+          event-set__4="_event: mouseleave; scale: 1 1 1"
+          sound="on: click; src: #click-sound"
+          pressable="on: click; src: ${behavior}">
+          <a-entity geometry="primitive: ring; radiusInner: 0.16; radiusOuter: 0.2"
+          material="side: double; color: #cccccc"></a-entity>
+          <a-image src="${img}" rotation="${rotation}" height="0.2" width="0.2" transparent="true"></a-image>
+          </a-entity>
+      // sky and ground
+      a-sky(color='#6EBAA7', radius='20')
+      a-entity#plane.geometry(geometry='primitive: circle; radius: 20', rotation='-90 0 0', material='side: double; color: #ffffff', sound='on: click; src: #click-sound', stackable='on: click')
+      // camera and cursor
+      a-entity#avatar(position='0 1 0', wasd-controls='')
+        a-entity#camera(camera='', look-controls='')
+          a-cursor#cursor(animation__click='property: scale; startEvents: click; from: 0.1 0.1 0.1; to: 1 1 1; dur: 150', animation__fusing='property: fusing; startEvents: fusing; from: 1 1 1; to: 0.1 0.1 0.1; dur: 1500', event-set__1='_event: mouseenter; color: springgreen', event-set__2='_event: mouseleave; color: black', fuse='false', raycaster='objects: .geometry')
+          a-entity#wormhole(visible='false', sound='on: teleportation-start; src: #launch-sound')
+            a-entity
+              a-entity(geometry='primitive: ring; radiusInner: 0.85; radiusOuter: 1', material='side: double; color: #f8b195', position='0 0 -4')
+              a-entity(geometry='primitive: ring; radiusInner: 0.85; radiusOuter: 1', material='side: double; color: #f67280', position='0 0 -3')
+              a-entity(geometry='primitive: ring; radiusInner: 0.85; radiusOuter: 1', material='side: double; color: #c06c84', position='0 0 -2')
+              a-entity(geometry='primitive: ring; radiusInner: 0.85; radiusOuter: 1', material='side: double; color: #6c5b7b', position='0 0 -1')
+              a-entity(geometry='primitive: ring; radiusInner: 0.85; radiusOuter: 1', material='side: double; color: #355c7d', position='0 0 0')
+            a-animation#wormhole-animation(attribute='position', dur='1000', fill='forwards', from='0 0 -1', to='0 0 5', begin='teleportation-start')
+      // dynamic components: marker, menu and prototypes
+      a-entity#marker(visible='true')
+        a-entity(geometry='primitive: ring; radiusInner: 0.05; radiusOuter: 0.07', material='side: double; color: #6EBAA7', position='0 0 0.005', rotation='0 0 0')
+        a-entity(geometry='primitive: cone; radius-bottom: 0.06; radius-top: 0; height: 0.1', material='side: double; color: #6EBAA7', position='0 0 0.05', rotation='-90 0 0')
+      a-entity#menu(visible='false', look-at='[camera]')
+        a-entity#menu-main(look-at='[camera]', position='0 0 0', visible='true')
+          a-entity(scale='0.6 0.6 0.6')
+            a-entity(template='src: #img-button', position='-0.5 -0.5 0', rotation='0 0 0', data-behavior='go_to_geometry', data-img='#icon-geometry', data-rotation='0 0 0')
+            a-entity(template='src: #img-button', position='0 -0.5 0', rotation='0 0 0', data-behavior='tp', data-img='#icon-teleport', data-rotation='0 0 0')
+            a-entity(template='src: #img-button', position='0 -1 0', rotation='0 0 0', data-behavior='api', data-img='#icon-api', data-rotation='0 0 0')
+            a-entity(template='src: #img-button', position='0.5 -0.5 0', rotation='0 0 0', data-behavior='go_to_property', data-img='#icon-property', data-rotation='0 0 0')
+        a-entity#menu-geometry(look-at='[camera]', position='0 0 -1', visible='false')
+          a-entity(scale='0.6 0.6 0.6')
+            a-entity(template='src: #geometry', position='0 0.5 0', rotation='0 0 0', data-primitive='box', data-scale='0.1')
+            a-entity(template='src: #geometry', position='0 0 0', rotation='0 0 0', data-primitive='cone', data-scale='0.1')
+            a-entity(template='src: #geometry', position='0 -0.5 0', rotation='0 0 0', data-primitive='cylinder', data-scale='0.1')
+            a-entity(template='src: #geometry', position='0.5 0.5 0', rotation='0 0 0', data-primitive='dodecahedron', data-scale='0.1')
+            a-entity(template='src: #geometry', position='0.5 0 0', rotation='0 0 0', data-primitive='octahedron', data-scale='0.1')
+            a-entity(template='src: #geometry', position='0.5 -0.5 0', rotation='0 0 0', data-primitive='sphere', data-scale='0.1')
+            a-entity(template='src: #geometry', position='-0.5 0.5 0', rotation='0 0 0', data-primitive='tetrahedron', data-scale='0.1')
+            a-entity(template='src: #geometry', position='-0.5 0 0', rotation='0 0 0', data-primitive='torus', data-scale='0.05')
+            a-entity(template='src: #geometry', position='-0.5 -0.5 0', rotation='0 0 0', data-primitive='torusKnot', data-scale='0.05')
+            a-entity(template='src: #img-button', position='0 -1 0', rotation='0 0 0', data-behavior='back_to_main', data-img='#icon-back', data-rotation='0 0 0')
+        a-entity#menu-property(look-at='[camera]', position='0 0 -1', visible='false')
+          a-entity(scale='0.6 0.6 0.6')
+            a-entity(template='src: #img-button', position='-0.5 0 0', rotation='0 0 0', data-behavior='go_to_resize', data-img='#icon-resize', data-rotation='0 0 0')
+            a-entity(template='src: #img-button', position='0 0 0', rotation='0 0 0', data-behavior='go_to_rotate', data-img='#icon-rotate', data-rotation='0 0 0')
+            a-entity(template='src: #img-button', position='0.5 0 0', rotation='0 0 0', data-behavior='go_to_reposition', data-img='#icon-reposition', data-rotation='0 0 0')
+            a-entity(template='src: #img-button', position='0.25 -0.5 0', rotation='0 0 0', data-behavior='del', data-img='#icon-delete', data-rotation='0 0 0')
+            a-entity(template='src: #img-button', position='-0.25 -0.5 0', rotation='0 0 0', data-behavior='back_to_main', data-img='#icon-back', data-rotation='0 0 0')
+        a-entity#menu-resize(look-at='[camera]', position='0 0 -1', visible='false')
+          a-entity(scale='0.6 0.6 0.6')
+            a-entity(template='src: #img-button', position='0.5 -0.5 0', rotation='0 0 0', data-behavior='scale_down', data-img='#icon-resize', data-rotation='0 0 0')
+            a-entity(template='src: #img-button', position='0 -0.5 0', rotation='0 0 0', data-behavior='scale_up', data-img='#icon-resize1', data-rotation='0 0 0')
+            a-entity(template='src: #img-button', position='-0.5 -0.5 0', rotation='0 0 0', data-behavior='back_to_property', data-img='#icon-back', data-rotation='0 0 0')
+        a-entity#menu-rotate(look-at='[camera]', position='0 0 -1', visible='false')
+          a-entity(scale='0.6 0.6 0.6')
+            a-entity(template='src: #img-button', position='-0.5 0.5 0', rotation='0 0 0', data-behavior='rotate_z_c', data-img='#icon-rotate-xy-c', data-rotation='0 0 0')
+            a-entity(template='src: #img-button', position='-0.5 0 0', rotation='0 0 0', data-behavior='rotate_z_cc', data-img='#icon-rotate-xy-cc', data-rotation='0 0 0')
+            a-entity(template='src: #img-button', position='0 0.5 0', rotation='0 0 0', data-behavior='rotate_y_c', data-img='#icon-rotate-yz-c', data-rotation='0 0 0')
+            a-entity(template='src: #img-button', position='0 0 0', rotation='0 0 0', data-behavior='rotate_y_cc', data-img='#icon-rotate-yz-cc', data-rotation='0 0 0')
+            a-entity(template='src: #img-button', position='0.5 0.5 0', rotation='0 0 0', data-behavior='rotate_x_c', data-img='#icon-rotate-xz-c', data-rotation='0 0 0')
+            a-entity(template='src: #img-button', position='0.5 0 0', rotation='0 0 0', data-behavior='rotate_x_cc', data-img='#icon-rotate-xz-cc', data-rotation='0 0 0')
+            a-entity(template='src: #img-button', position='0 -0.5 0', rotation='0 0 0', data-behavior='back_to_property', data-img='#icon-back', data-rotation='0 0 0')
+        a-entity#menu-reposition(look-at='[camera]', position='0 0 -1', visible='false')
+          a-entity(scale='0.6 0.6 0.6')
+            a-entity(template='src: #img-button', position='-0.5 0.5 0', rotation='0 0 0', data-behavior='move_x_backward', data-img='#icon-reposition1', data-rotation='0 0 0')
+            a-entity(template='src: #img-button', position='-0.5 0 0', rotation='0 0 0', data-behavior='move_x_forward', data-img='#icon-reposition1', data-rotation='0 0 180')
+            a-entity(template='src: #img-button', position='0 0.5 0', rotation='0 0 0', data-behavior='move_y_forward', data-img='#icon-reposition2', data-rotation='0 0 0')
+            a-entity(template='src: #img-button', position='0 0 0', rotation='0 0 0', data-behavior='move_y_backward', data-img='#icon-reposition3', data-rotation='0 0 0')
+            a-entity(template='src: #img-button', position='0.5 0.5 0', rotation='0 0 0', data-behavior='move_z_backward', data-img='#icon-reposition1', data-rotation='0 0 90')
+            a-entity(template='src: #img-button', position='0.5 0 0', rotation='0 0 0', data-behavior='move_z_forward', data-img='#icon-reposition1', data-rotation='0 0 -90')
+            a-entity(template='src: #img-button', position='0 -0.5 0', rotation='0 0 0', data-behavior='back_to_property', data-img='#icon-back', data-rotation='0 0 0')
+      a-entity#axis-system(visible='false')
+        a-entity(geometry='primitive: cylinder; radius: 0.004; height: 0.4', material='side: double; color: #2A363B', position='0 -0.2 0', rotation='0 0 0')
+        a-entity#z-arrow(geometry='primitive: cone; radius-bottom: 0.02; radius-top: 0; height: 0.1', material='side: double; color: #FF4E50', position='0 -0.4 0', rotation='180 0 0')
+        a-entity(geometry='primitive: cylinder; radius: 0.004; height: 0.4', material='side: double; color: #2A363B', position='0.2 0 0', rotation='0 0 -90')
+        a-entity#x-arrow(geometry='primitive: cone; radius-bottom: 0.02; radius-top: 0; height: 0.1', material='side: double; color: #FF4E50', position='0.4 0 0', rotation='0 0 -90')
+        a-entity(geometry='primitive: cylinder; radius: 0.004; height: 0.4', material='side: double; color: #2A363B', position='0 0 0.2', rotation='90 0 0')
+        a-entity#y-arrow(geometry='primitive: cone; radius-bottom: 0.02; radius-top: 0; height: 0.1', material='side: double; color: #FF4E50', position='0 0 0.4', rotation='90 0 0')
+      a-entity#box-prototype.geometry(visible='false')
+        a-entity(geometry='primitive: box; depth: 0.4; height: 0.4; width: 0.4', rotation='90 0 0', material='shader: standard; color: #999999', sound='on: click; src: #click-sound', stackable='on: click')
+      a-entity#cone-prototype.geometry(visible='false')
+        a-entity(geometry='primitive: cone; height: 0.4; radius-bottom: 0.2; radius-top: 0', rotation='90 0 0', material='shader: standard; color: #999999', sound='on: click; src: #click-sound', stackable='on: click')
+      a-entity#cylinder-prototype.geometry(visible='false')
+        a-entity(geometry='primitive: cylinder; radius: 0.2; height: 0.4', rotation='90 0 0', material='shader: standard; color: #999999', sound='on: click; src: #click-sound', stackable='on: click')
+      a-entity#dodecahedron-prototype.geometry(visible='false')
+        a-entity(geometry='primitive: dodecahedron; radius: 0.2', rotation='90 0 0', material='shader: standard; color: #999999', sound='on: click; src: #click-sound', stackable='on: click')
+      a-entity#octahedron-prototype.geometry(visible='false')
+        a-entity(geometry='primitive: octahedron; radius: 0.2', rotation='90 0 0', material='shader: standard; color: #999999', sound='on: click; src: #click-sound', stackable='on: click')
+      a-entity#octahedron-prototype.geometry(visible='false')
+        a-entity(geometry='primitive: octahedron; radius: 0.2', rotation='90 0 0', material='shader: standard; color: #999999', sound='on: click; src: #click-sound', stackable='on: click')
+      a-entity#sphere-prototype.geometry(visible='false')
+        a-entity(geometry='primitive: sphere; radius: 0.2', rotation='90 0 0', material='shader: standard; color: #999999', sound='on: click; src: #click-sound', stackable='on: click')
+      a-entity#tetrahedron-prototype.geometry(visible='false')
+        a-entity(geometry='primitive: tetrahedron; radius: 0.2', rotation='90 0 0', material='shader: standard; color: #999999', sound='on: click; src: #click-sound', stackable='on: click')
+      a-entity#torus-prototype.geometry(visible='false')
+        a-entity(geometry='primitive: torus; radius: 0.12; radiusTubular: 0.04', rotation='90 0 0', material='shader: standard; color: #999999', sound='on: click; src: #click-sound', stackable='on: click')
+      a-entity#torusKnot-prototype.geometry(visible='false')
+        a-entity(geometry='primitive: torusKnot; radius: 0.12; radiusTubular: 0.02', rotation='90 0 0', material='shader: standard; color: #999999', sound='on: click; src: #click-sound', stackable='on: click')
+
