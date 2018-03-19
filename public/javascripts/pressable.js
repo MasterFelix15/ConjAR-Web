@@ -50,7 +50,7 @@ AFRAME.registerComponent('pressable', {
                     }, 500);
                     break;
                 case "api":
-                    loadDoc();
+                    putModel();
                     break;
                 case "go_to_geometry":
                     menu_main.setAttribute('position', "0 0 -1");

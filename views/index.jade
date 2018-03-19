@@ -19,8 +19,8 @@ html
   body
     a-scene(stats='')
       a-assets
-        audio#click-sound(crossorigin='anonymous', src='audio/click.mp3')
-        audio#launch-sound(crossorigin='anonymous', src='audio/launch.mp3')
+        audio#click-sound(src='audio/click.mp3')
+        audio#launch-sound(src='audio/launch.mp3')
         img#icon-geometry(src='images/cube.png')
         img#icon-teleport(src='images/location.png')
         img#icon-api(src='images/api.png')
@@ -173,4 +173,3 @@ html
         a-entity(geometry='primitive: torus; radius: 0.12; radiusTubular: 0.04', rotation='90 0 0', material='shader: standard; color: #999999', sound='on: click; src: #click-sound', stackable='on: click')
       a-entity#torusKnot-prototype.geometry(visible='false')
         a-entity(geometry='primitive: torusKnot; radius: 0.12; radiusTubular: 0.02', rotation='90 0 0', material='shader: standard; color: #999999', sound='on: click; src: #click-sound', stackable='on: click')
-
