@@ -7,20 +7,8 @@ var unzip = require('unzip');
 var router = express.Router();
 
 /* GET users listing. */
-router.get('/1', function(req, res, next) {
-
-  var url = 'https://www.turbosquid.com/Search/Index.cfm?file_type=119&keyword=apple&max_price=0&media_typeid=2&min_price=0';
-
-  request(url, function(error, response, html){
-    if(!error){
-        var $ = cheerio.load(html);
-
-        $('#SearchResultAssets').filter(function(){
-            var data = $(this);
-            res.send(data.text());
-        })
-    }
-  })
+router.get('/1/:keyword', function(req, res, next) {
+    parseTurboSquid(req.params.keyword, res);
 });
 
 router.get('/2', function(req, res, next) {
@@ -31,6 +19,8 @@ router.get('/2', function(req, res, next) {
 });
 
 module.exports = router;
+
+var workingDir = "/Users/felix/WebstormProjects/ConjAR-Web/public/models/";
 
 var options_srch = {
     method: 'GET',
@@ -135,21 +125,34 @@ function extractCookie(response) {
 
 function extractall(fileName, next) {
     if (fileName.endsWith('.rar')) {
-        unrarp.extractAll(fileName, './'+fileName.split('.rar')[0]).then(next());
+        unrarp.extractAll(workingDir+fileName, workingDir+fileName.split('.rar')[0]).then(next());
     } else if (fileName.endsWith('.zip')) {
-        fs.createReadStream(fileName).pipe(unzip.Extract({ path: './'+fileName.split('.zip')[0] })).on('finish', function (args) { next() });
+        fs.createReadStream(workingDir+fileName).pipe(unzip.Extract({ path: workingDir+fileName.split('.zip')[0] })).on('finish', function (args) { next() });
     } else if (fileName.endsWith('.obj')) {
         var dir = fileName.split('.obj')[0];
         fs.mkdirSync(dir);
-        fs.rename(fileName, './'+fileName.split('.obj')[0]+'/'+fileName.split('/')[fileName.split('/').length-1] , function (err) {
+        fs.rename(fileName, workingDir+fileName.split('.obj')[0]+'/'+fileName.split('.obj')[0]+'.obj' , function (err) {
             if (err) throw err;
         });
         next();
     }
 }
 
+function generateResponse(dirName) {
+    var data = new Object();
+    var files = fs.readdirSync(workingDir+dirName);
+    for (var i = 0; i < files.length; i++) {
+        if (files[i].toLowerCase().endsWith('.obj')) {
+            data['obj'] = 'models/'+dirName+'/'+files[i];
+        }
+        if (files[i].toLowerCase().endsWith('.mtl')) {
+            data['mtl'] = 'models/'+dirName+'/'+files[i];
+        }
+    }
+    return data;
+}
 
-function parseTurboSquid(keyword) {
+function parseTurboSquid(keyword, res) {
     options_srch.qs.keyword = keyword;
     request(options_login.url, function (error, response, body) {
         var $ = cheerio.load(body);
@@ -176,21 +179,20 @@ function parseTurboSquid(keyword) {
                     console.log("asset file download link: "+obj.url);
                     if (obj) {
                         options_dl.url = obj.url;
-                        request(options_dl)
-                            .pipe(fs.createWriteStream('../public/models/'+obj.name))
-                            .on('close', function () {
-                                console.log('file: '+obj.name+' has been downloaded');
-                                extractall('../public/models/'+obj.name, function () {
-                                    fs.unlinkSync('../public/models/'+obj.name);
-                                    console.log('file: '+obj.name+' extracted, archive deleted');
-                                });
+                        var file = fs.createWriteStream(workingDir+obj.name);
+                        var stream = request(options_dl).pipe(file);
+                        stream.on('finish', function () {
+                            console.log('file: '+obj.name+' has been downloaded');
+                            extractall(obj.name, function () {
+                                fs.unlinkSync(workingDir+obj.name);
+                                console.log('file: '+obj.name+' extracted, archive deleted');
+                                res.send(generateResponse(obj.name.split('.')[0]));
                             });
+                        });
                     }
                 });
             });
         });
     });
 }
-
-parseTurboSquid('banana');
 
