@@ -1,4 +1,4 @@
-function loadDoc() {
+function loadDoc(item) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
@@ -17,7 +17,7 @@ function loadDoc() {
             console.log(el);
         }
     };
-    xhttp.open("GET", "api/1/apple", true);
+    xhttp.open("GET", "api/1/"+item, true);
     xhttp.send();
 }
 

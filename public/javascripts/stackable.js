@@ -1,5 +1,4 @@
 AFRAME.registerComponent('stackable', {
-    dependencies: ['raycaster'],
     schema: {
         on: {type: 'string'}
     },

@@ -16,6 +16,9 @@ AFRAME.registerComponent('pressable', {
             var axisEl = document.querySelector('#axis-system');
             var markerEl = document.querySelector('#marker');
             var markedEl = document.querySelector('#marked');
+            if (markedEl.getAttribute('class') === 'geometry custom-model') {
+                markedEl = markedEl.parentNode;
+            }
             var menuEl = document.querySelector('#menu');
             var avatarEl = document.querySelector('#avatar');
             var location = markerEl.getAttribute('position');

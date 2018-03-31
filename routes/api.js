@@ -125,12 +125,18 @@ function extractCookie(response) {
 
 function extractall(fileName, next) {
     if (fileName.endsWith('.rar')) {
-        unrarp.extractAll(workingDir+fileName, workingDir+fileName.split('.rar')[0]).then(next());
+        console.log(fileName);
+        unrarp.extractAll(workingDir+fileName, workingDir+fileName.split('.')[0]).then(function(exitCodes) {
+            next();
+        }, function(err) {
+            console.log('Command failed to run with error: ', err);
+        });
     } else if (fileName.endsWith('.zip')) {
         fs.createReadStream(workingDir+fileName).pipe(unzip.Extract({ path: workingDir+fileName.split('.zip')[0] })).on('finish', function (args) { next() });
     } else if (fileName.endsWith('.obj')) {
-        var dir = fileName.split('.obj')[0];
-        fs.mkdirSync(dir);
+
+        var dir = fileName.split('.')[0];
+        fs.mkdirSync(workingDir + dir);
         fs.rename(fileName, workingDir+fileName.split('.obj')[0]+'/'+fileName.split('.obj')[0]+'.obj' , function (err) {
             if (err) throw err;
         });
@@ -195,4 +201,3 @@ function parseTurboSquid(keyword, res) {
         });
     });
 }
-
