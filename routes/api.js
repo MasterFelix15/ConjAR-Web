@@ -13,7 +13,7 @@ router.get('/search_for/:keyword', function(req, res, next) {
 
 module.exports = router;
 
-var workingDir = "/Users/felix/WebstormProjects/ConjAR-Web/public/models/";
+var workingDir = process.cwd() + "/public/models/";
 
 var options_srch = {
     method: 'GET',
