@@ -8,6 +8,12 @@ AFRAME.registerComponent('stackable', {
         var el = this.el;
 
         el.addEventListener(data.on, function (evt) {
+            // purge unwanted entities
+            var uwEls = document.querySelectorAll('.to-be-purged');
+            for (var i = 0; i < uwEls.length; i++) {
+                uwEls[i].parentNode.removeChild(uwEls[i]);
+            }
+
             var intersection = evt.detail.intersection;
             if (!intersection) { return; }
             var mat = intersection.object.matrixWorld;
@@ -69,6 +75,8 @@ AFRAME.registerComponent('stackable', {
             menu_reposition.setAttribute('visible', "false");
             menu_main.setAttribute('position', "0 0 0");
             menu_main.setAttribute('visible', "true");
+
+
         });
     }
 });

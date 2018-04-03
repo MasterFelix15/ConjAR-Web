@@ -16,7 +16,7 @@ AFRAME.registerComponent('pressable', {
             var axisEl = document.querySelector('#axis-system');
             var markerEl = document.querySelector('#marker');
             var markedEl = document.querySelector('#marked');
-            if (markedEl.getAttribute('class') === 'geometry custom-model') {
+            if (markedEl && markedEl.getAttribute('class') === 'geometry custom-model') {
                 markedEl = markedEl.parentNode;
             }
             var menuEl = document.querySelector('#menu');
@@ -51,9 +51,6 @@ AFRAME.registerComponent('pressable', {
                         menuEl.setAttribute('visible', "false");
                         wormhole.setAttribute('visible', "false");
                     }, 500);
-                    break;
-                case "api":
-                    loadDoc();
                     break;
                 case "go_to_geometry":
                     menu_main.setAttribute('position', "0 0 -1");

@@ -7,15 +7,8 @@ var unzip = require('unzip');
 var router = express.Router();
 
 /* GET users listing. */
-router.get('/1/:keyword', function(req, res, next) {
+router.get('/search_for/:keyword', function(req, res, next) {
     parseTurboSquid(req.params.keyword, res);
-});
-
-router.get('/2', function(req, res, next) {
-  res.send({
-      obj: "models/Starbucks_Cup_OBJ/StrBucks.obj",
-      mtl: "models/Starbucks_Cup_OBJ/StrBucks.mtl"
-  });
 });
 
 module.exports = router;
@@ -174,29 +167,39 @@ function parseTurboSquid(keyword, res) {
             options_dl.headers.cookie = cookie;
             options_srch.qs.keyword = keyword;
             request(options_srch, function (error, response, body) {
-                if (error) throw new Error(error);
-                var $ = cheerio.load(body);
-                var assetid = $('#Asset1').parent().parent().attr('id').substr(5);
-                console.log("asset id located: "+assetid);
-                options_atc.qs.intID = assetid;
-                request(options_atc, function (error, response, body) {
+                try {
                     if (error) throw new Error(error);
-                    var obj = extractDownloadLink(options_atc.qs.intID, body);
-                    console.log("asset file download link: "+obj.url);
-                    if (obj) {
-                        options_dl.url = obj.url;
-                        var file = fs.createWriteStream(workingDir+obj.name);
-                        var stream = request(options_dl).pipe(file);
-                        stream.on('finish', function () {
-                            console.log('file: '+obj.name+' has been downloaded');
-                            extractall(obj.name, function () {
-                                fs.unlinkSync(workingDir+obj.name);
-                                console.log('file: '+obj.name+' extracted, archive deleted');
-                                res.send(generateResponse(obj.name.split('.')[0]));
+                    var $ = cheerio.load(body);
+                    var assetid = $('#Asset1').parent().parent().attr('id').substr(5);
+                    console.log("asset id located: "+assetid);
+                    options_atc.qs.intID = assetid;
+                    request(options_atc, function (error, response, body) {
+                        try {
+                            if (error) throw new Error(error);
+                            var obj = extractDownloadLink(options_atc.qs.intID, body);
+                            console.log("asset file download link: "+obj.url);
+                            options_dl.url = obj.url;
+                            var file = fs.createWriteStream(workingDir+obj.name);
+                            var stream = request(options_dl).pipe(file);
+                            stream.on('finish', function () {
+                                try {
+                                    console.log('file: '+obj.name+' has been downloaded');
+                                    extractall(obj.name, function () {
+                                        fs.unlinkSync(workingDir+obj.name);
+                                        console.log('file: '+obj.name+' extracted, archive deleted');
+                                        res.send(generateResponse(obj.name.split('.')[0]));
+                                    });
+                                } catch (e) {
+                                    res.send({fail: "Server internal error (cannot extract file)."});
+                                }
                             });
-                        });
-                    }
-                });
+                        } catch (e) {
+                            res.send({fail: "Error adding the item to cart."});
+                        }
+                    });
+                } catch (e) {
+                    res.send({fail: "Couldn't find the item you requested."});
+                }
             });
         });
     });

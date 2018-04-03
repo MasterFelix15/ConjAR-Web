@@ -16,7 +16,6 @@ html
         script(src='javascripts/selectable.js')
         script(src='javascripts/stackable.js')
         script(src='javascripts/pressable.js')
-        script(src='javascripts/api-handler.js')
         script(src='javascripts/voice-command.js')
 
     body
@@ -106,7 +105,6 @@ html
                     a-entity(scale='0.6 0.6 0.6')
                         a-entity(template='src: #img-button', position='-0.5 -0.5 0', rotation='0 0 0', data-behavior='go_to_geometry', data-img='#icon-geometry', data-rotation='0 0 0')
                         a-entity(template='src: #img-button', position='0 -0.5 0', rotation='0 0 0', data-behavior='tp', data-img='#icon-teleport', data-rotation='0 0 0')
-                        a-entity(template='src: #img-button', position='0 -1 0', rotation='0 0 0', data-behavior='api', data-img='#icon-api', data-rotation='0 0 0')
                         a-entity(template='src: #img-button', position='0.5 -0.5 0', rotation='0 0 0', data-behavior='go_to_property', data-img='#icon-property', data-rotation='0 0 0')
                 a-entity#menu-geometry(look-at='[camera]', position='0 0 -1', visible='false')
                     a-entity(scale='0.6 0.6 0.6')
@@ -202,4 +200,8 @@ html
                 a-entity(geometry='primitive: cylinder; height: 0.15; radius: 0.01', material='color: black', position='0.2 -0.125 -0.2', rotation='0 0 0')
                 a-entity(geometry='primitive: cylinder; height: 0.15; radius: 0.01', material='color: black', position='-0.2 0.125 -0.2', rotation='0 0 0')
                 a-entity(geometry='primitive: cylinder; height: 0.15; radius: 0.01', material='color: black', position='-0.2 -0.125 -0.2', rotation='0 0 0')
+                a-text.message(width='2', anchor='center', align='center', color='black', value='hello world', position='0 0 0.2', rotation='0 0 0')
+                a-text.message(width='2', anchor='center', align='center', color='black', value='hello world', position='0.2 0 0', rotation='0 90 0')
+                a-text.message(width='2', anchor='center', align='center', color='black', value='hello world', position='0 0 -0.2', rotation='0 180 0')
+                a-text.message(width='2', anchor='center', align='center', color='black', value='hello world', position='-0.2 0 0', rotation='0 270 0')
 

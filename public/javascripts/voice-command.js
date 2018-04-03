@@ -36,7 +36,7 @@ function createModel(data) {
     );
 }
 
-function createPlaceHolder() {
+function createPlaceHolder(item) {
     var markerEl = document.querySelector('#marker');
     var menuEl = document.querySelector('#menu');
     var sceneEl = document.querySelector('a-scene');
@@ -64,19 +64,41 @@ function createPlaceHolder() {
     var lookAtTarget = new THREE.Vector3().addVectors(calculated_position, direction);
     entityEl.object3D.lookAt(lookAtTarget);
     entityEl.setAttribute('id', "placeholder");
+
+    var msgEls = entityEl.querySelectorAll(".message");
+    for (var i = 0; i < msgEls.length; i++) {
+        msgEls[i].setAttribute('value', item);
+    }
+}
+
+function displayErrorMessage(data) {
+    var phEl = document.querySelector('#placeholder');
+    var msgEls = phEl.querySelectorAll(".message");
+    for (var i = 0; i < msgEls.length; i++) {
+        msgEls[i].setAttribute('color', 'red');
+        msgEls[i].setAttribute('value', 'Error');
+    }
+    phEl.setAttribute('class', "to-be-purged");
+    console.log(data.fail);
 }
 
 function searchFor(item) {
+    var wrapperEl = document.querySelector('#placeholder');
+    if (wrapperEl) {return;}
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             var data = JSON.parse(this.responseText);
-            createModel(data);
+            if (data.fail) {
+                displayErrorMessage(data);
+            } else {
+                createModel(data);
+            }
         }
     };
-    xhttp.open("GET", "api/1/"+item, true);
+    xhttp.open("GET", "api/search_for/"+item, true);
     xhttp.send();
-    createPlaceHolder();
+    createPlaceHolder(item);
 }
 
 function dummyPut() {
