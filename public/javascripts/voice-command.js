@@ -101,17 +101,34 @@ function searchFor(item) {
     createPlaceHolder(item);
 }
 
-function dummyPut() {
-    var data = {obj: "models/Banana/Banana.obj"};
-    createModel(data);
-}
-
 if (annyang) {
     var commands = {
-        'search for *item': searchFor
+        'search *item': searchFor
     };
 
     annyang.addCommands(commands);
 
-    annyang.start();
+    // call backs
+    annyang.addCallback('error', function() {
+        document.querySelector('#voice-assistant').emit('error');
+    });
+
+    annyang.addCallback('soundstart', function () {
+        document.querySelector('#voice-assistant').emit('start');
+    });
+
+    annyang.addCallback('end', function () {
+        document.querySelector('#voice-assistant').emit('end');
+
+    });
+
+    annyang.addCallback('resultMatch', function(userSaid, commandText, phrases) {
+        document.querySelector('#voice-assistant').emit('match', {userSaid: userSaid, commandText: commandText, phrases: phrases});
+    });
+
+    annyang.addCallback('resultNoMatch', function() {
+        document.querySelector('#voice-assistant').emit('nomatch');
+    });
+
+    annyang.start({ autoRestart: true, continuous: false });
 }
