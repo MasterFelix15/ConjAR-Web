@@ -20,14 +20,28 @@ Install dependency node modules:
 ```
 npm install
 ```
-Then start the server:
+Generate certificates:
+```
+openssl req -x509 -newkey rsa:4096 -keyout certificates/key.pem -out certificates/cert.pem -days 365 -nodes
+```
+Then start the server, the http server is listening on port 3000, and the https server is listening on port 3443:
+```
+npm start 
+```
+If you are running **Windows**, you may want to download **OpenSSL** from [here](https://wiki.openssl.org/index.php/Binaries) to generate key.pem and cert.pem and place them in the /certificates directory.
+
+Then proceed to install dependency node modules:
+```
+npm install
+```
+And finally start the server, the http server is listening on port 3000, and the https server is listening on port 3443:
 ```
 npm start 
 ```
 
 ## Demo
 
-Live demo currently not available
+Live demo currently not available. Go [here](localhost:3000) for a working demo after set up is complete.
 
 ## Authors
 
